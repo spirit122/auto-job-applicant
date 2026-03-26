@@ -1,104 +1,243 @@
+<div align="center">
+
 # Auto Job Applicant
 
-Automated job search and application bot built with Python and Selenium. Scrapes job listings from multiple ATS platforms (Greenhouse, Lever, Workable, Ashby, SmartRecruiters), generates tailored cover letters, and submits applications automatically.
+### Automated Job Search & Application Bot
+
+**Find, filter, and auto-apply to hundreds of job postings across 5 ATS platforms — hands-free.**
+
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![Selenium](https://img.shields.io/badge/Selenium-WebDriver-43B02A?style=for-the-badge&logo=selenium&logoColor=white)](https://www.selenium.dev/)
+[![BeautifulSoup](https://img.shields.io/badge/BeautifulSoup4-Parser-orange?style=for-the-badge)](https://www.crummy.com/software/BeautifulSoup/)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+
+[![Greenhouse](https://img.shields.io/badge/Greenhouse-supported-24A47F?style=flat-square)](https://www.greenhouse.io/)
+[![Lever](https://img.shields.io/badge/Lever-supported-5B21B6?style=flat-square)](https://www.lever.co/)
+[![Workable](https://img.shields.io/badge/Workable-supported-0EA5E9?style=flat-square)](https://www.workable.com/)
+[![Ashby](https://img.shields.io/badge/Ashby-supported-1E293B?style=flat-square)](https://www.ashbyhq.com/)
+[![SmartRecruiters](https://img.shields.io/badge/SmartRecruiters-supported-E11D48?style=flat-square)](https://www.smartrecruiters.com/)
+
+[Features](#features) | [How It Works](#how-it-works) | [Setup](#setup) | [Usage](#usage) | [ATS Platforms](#supported-ats-platforms)
+
+---
+
+</div>
+
+## The Problem
+
+Applying to jobs is repetitive and time-consuming. You find a listing, fill the same form fields over and over — name, email, phone, upload CV, write a cover letter — across dozens of different platforms. Each one takes 5-15 minutes. Multiply that by 50+ applications and you've lost days.
+
+## The Solution
+
+Auto Job Applicant **automates the entire pipeline**:
+
+```
+Search → Filter → Detect ATS → Fill Form → Generate Cover Letter → Submit → Report
+```
+
+> *"Run the script, go grab a coffee, come back to 20+ applications submitted."*
+
+---
 
 ## Features
 
-- **Multi-ATS Support**: Greenhouse, Lever, Workable, Ashby, SmartRecruiters
-- **Smart Form Filling**: Detects and fills application forms automatically using Selenium
-- **Cover Letter Generation**: Creates customized cover letters per job posting
-- **Job Search Engine**: Scrapes multiple sources for relevant job listings
-- **SPA Handling**: Intelligent wait strategies for single-page applications
-- **Post-Submit Verification**: Confirms successful application submissions
-- **Email Notifications**: Sends HTML reports via Gmail
-- **Duplicate Detection**: Tracks applied URLs to avoid re-applying
-- **HTML Reports**: Generates detailed reports of found jobs and applications
+| Feature | Description |
+|---------|-------------|
+| **Multi-ATS Engine** | Detects and handles 5 major ATS platforms automatically |
+| **Smart Form Detection** | Identifies form fields using multi-selector strategies with fallbacks |
+| **Cover Letter Generator** | Creates tailored cover letters per job posting |
+| **SPA-Aware Navigation** | Intelligent wait strategies for React/Angular single-page apps |
+| **Post-Submit Verification** | Confirms successful submissions, retries on failure |
+| **Duplicate Tracking** | Logs applied URLs to never re-apply to the same job |
+| **Job Search Engine** | Scrapes RSS feeds, job boards & ATS APIs for matching listings |
+| **HTML Reports** | Generates detailed visual reports of found jobs & applications |
+| **Email Notifications** | Sends results via Gmail with HTML formatting |
+| **Resume Upload** | Handles file upload fields across all platforms |
+
+---
+
+## How It Works
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                   AUTO JOB APPLICANT                    │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  1. DISCOVER    Scrape job boards, RSS feeds, ATS APIs  │
+│       │                                                 │
+│       ▼                                                 │
+│  2. FILTER      Match by keywords, location, recency    │
+│       │                                                 │
+│       ▼                                                 │
+│  3. DETECT      Identify ATS platform (GH/Lever/etc)    │
+│       │                                                 │
+│       ▼                                                 │
+│  4. FILL        Smart form filling with multi-strategy  │
+│       │         selectors and fallback chains            │
+│       ▼                                                 │
+│  5. GENERATE    Create tailored cover letter for role    │
+│       │                                                 │
+│       ▼                                                 │
+│  6. SUBMIT      Click submit + post-submit verification │
+│       │                                                 │
+│       ▼                                                 │
+│  7. TRACK       Log URL, update report, send email      │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Supported ATS Platforms
+
+Each platform has a dedicated handler with optimized strategies:
+
+| Platform | Detection | Form Fill | Submit | Special Features |
+|:--------:|:---------:|:---------:|:------:|:----------------:|
+| **Greenhouse** | iframe + URL | Multi-strategy | Pre-submit validation | iframe detection, field mapping |
+| **Lever** | URL pattern | Multi-selector | Double fallback | Dynamic field detection |
+| **Workable** | URL + DOM | Triple fallback | SPA-aware submit | React SPA handling |
+| **Ashby** | URL pattern | SPA wait + fill | Enhanced submit | Single-page app support |
+| **SmartRecruiters** | URL + DOM | Multi-selector | Double fallback | Complex form handling |
+
+---
 
 ## Tech Stack
 
-- **Python 3.10+**
-- **Selenium WebDriver** (Edge/Chrome)
-- **BeautifulSoup4** - HTML parsing
-- **Requests** - HTTP client
-- **feedparser** - RSS feed parsing
-- **smtplib** - Email notifications
+| Technology | Purpose |
+|:----------:|:-------:|
+| **Python 3.10+** | Core language |
+| **Selenium WebDriver** | Browser automation (Edge/Chrome) |
+| **BeautifulSoup4** | HTML parsing & scraping |
+| **Requests** | HTTP client for API calls |
+| **feedparser** | RSS/Atom feed parsing |
+| **smtplib** | Email notifications |
+
+---
 
 ## Project Structure
 
 ```
 auto-job-applicant/
-├── auto_postulador.py    # Main bot - searches & applies to jobs (~4,800 lines)
-├── buscador_trabajos.py  # Job search engine with HTML reports (~1,300 lines)
-├── ofertas_frescas.py    # Curated job listings from ATS platforms
-├── .env.example          # Environment variables template
+│
+├── auto_postulador.py      # Main bot — search, fill & apply (~4,800 lines)
+├── buscador_trabajos.py    # Job search engine + HTML reports (~1,300 lines)
+├── ofertas_frescas.py      # Curated active listings from ATS platforms
+│
+├── .env.example            # Environment variables template
 ├── .gitignore
+├── LICENSE
 └── README.md
 ```
 
+---
+
 ## Setup
 
-1. **Clone the repo**
-   ```bash
-   git clone https://github.com/spirit122/auto-job-applicant.git
-   cd auto-job-applicant
+### 1. Clone
+
+```bash
+git clone https://github.com/spirit122/auto-job-applicant.git
+cd auto-job-applicant
+```
+
+### 2. Install dependencies
+
+```bash
+pip install requests beautifulsoup4 selenium feedparser lxml
+```
+
+### 3. Configure
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` with your personal data:
+
+```env
+APPLICANT_FULL_NAME=John Doe
+APPLICANT_EMAIL=john@example.com
+APPLICANT_PHONE=+1234567890
+APPLICANT_CITY=New York
+APPLICANT_TITLE=Backend Developer
+APPLICANT_CV_PATH=./my_resume.pdf
+```
+
+### 4. Gmail notifications (optional)
+
+1. Enable [2-Step Verification](https://myaccount.google.com/security)
+2. Create an [App Password](https://myaccount.google.com/apppasswords)
+3. Add to `.env`:
+   ```env
+   GMAIL_APP_PASSWORD=your-16-char-password
    ```
 
-2. **Install dependencies**
-   ```bash
-   pip install requests beautifulsoup4 selenium feedparser lxml
-   ```
+### 5. Place your resume
 
-3. **Configure environment variables**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your personal data
-   ```
+Drop your CV/Resume PDF files in the project directory.
 
-4. **Set up Gmail App Password** (for email notifications)
-   - Enable 2-Step Verification at https://myaccount.google.com/security
-   - Generate an App Password at https://myaccount.google.com/apppasswords
-   - Add it to your `.env` file
-
-5. **Place your CV/Resume** PDFs in the project directory
+---
 
 ## Usage
 
 ### Search for jobs
+
 ```bash
 python buscador_trabajos.py
 ```
-Generates `resultados_trabajos.html` with found listings.
 
-### Auto-apply to jobs
+Scrapes multiple sources and generates `resultados_trabajos.html` — open it in your browser to review found listings.
+
+### Auto-apply
+
 ```bash
 python auto_postulador.py
 ```
-Opens a browser, fills forms, and submits applications automatically.
 
-## Supported ATS Platforms
+Launches a browser, navigates to each listing, detects the ATS, fills forms, generates cover letters, and submits. Progress is logged in real-time.
 
-| Platform | Features |
-|----------|----------|
-| Greenhouse | iframe detection, multi-strategy filling, pre-submit validation |
-| Lever | Multi-selector support, double fallback |
-| Workable | SPA wait, triple fallback strategies |
-| Ashby | SPA-aware, enhanced submit |
-| SmartRecruiters | Multi-selector, double fallback |
+### Output
 
-## How It Works
+| File | Description |
+|------|-------------|
+| `resultados_trabajos.html` | Visual report of found job listings |
+| `reporte_postulaciones.html` | Report of submitted applications |
+| `urls_aplicadas.txt` | Log of applied URLs (prevents duplicates) |
+| `auto_postulador.log` | Detailed execution log |
 
-1. **Job Discovery**: Scrapes job boards, RSS feeds, and ATS APIs for matching positions
-2. **Filtering**: Filters by keywords, location, and recency
-3. **Form Detection**: Identifies the ATS platform and form structure
-4. **Smart Filling**: Fills name, email, phone, uploads CV, writes cover letter
-5. **Submission**: Clicks submit with verification and retry logic
-6. **Tracking**: Logs applied URLs to prevent duplicates
-7. **Reporting**: Generates HTML reports and sends email notifications
+---
+
+## Configuration
+
+All configuration is done via environment variables. See [`.env.example`](.env.example) for the full list.
+
+| Variable | Required | Description |
+|----------|:--------:|-------------|
+| `APPLICANT_FULL_NAME` | Yes | Your full name |
+| `APPLICANT_EMAIL` | Yes | Email for applications |
+| `APPLICANT_PHONE` | Yes | Phone number |
+| `APPLICANT_CITY` | Yes | Your city |
+| `APPLICANT_TITLE` | Yes | Professional title |
+| `APPLICANT_CV_PATH` | Yes | Path to your resume PDF |
+| `GMAIL_APP_PASSWORD` | No | For email notifications |
+
+---
+
+## Disclaimer
+
+This tool is for educational and personal use. Always review applications before bulk-submitting. Respect each platform's terms of service. The author is not responsible for any misuse.
+
+---
 
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE) for details.
 
-## Author
+---
 
-Built by [spirit122](https://github.com/spirit122)
+<div align="center">
+
+**Built by [spirit122](https://github.com/spirit122)**
+
+</div>
