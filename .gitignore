@@ -1,0 +1,34 @@
+# Logs
+*.log
+
+# Cache
+trabajos_cache.json
+__pycache__/
+*.pyc
+
+# Personal files
+*.pdf
+*.env
+.env
+
+# Reports
+resultados_trabajos.html
+reporte_postulaciones.html
+
+# Temp files
+cover_letter_temp.txt
+postulaciones_pendientes/
+urls_aplicadas.txt
+urls_expiradas.txt
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Screenshots & media
+*.png
+*.mp4
+
+# Windows scripts
+*.bat
+*.ps1
