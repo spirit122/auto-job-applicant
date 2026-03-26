@@ -122,7 +122,7 @@ UBICACIONES = [
     "América Latina",
     "South America",
     "Sudamérica",
-    "Santiago",
+    # Add your city here (e.g., "New York", "London", "Berlin")
     "Worldwide",
     "Anywhere",
     "Global",
@@ -131,7 +131,7 @@ UBICACIONES = [
 # --- Configuracion de archivos de salida ---
 DIRECTORIO_SALIDA = os.path.dirname(os.path.abspath(__file__))
 ARCHIVO_HTML = os.path.join(DIRECTORIO_SALIDA, "resultados_trabajos.html")
-ARCHIVO_LOG = os.path.join(DIRECTORIO_SALIDA, "buscador_trabajos.log")
+ARCHIVO_LOG = os.path.join(DIRECTORIO_SALIDA, "job_searcher.log")
 ARCHIVO_CACHE = os.path.join(DIRECTORIO_SALIDA, "trabajos_cache.json")
 
 # --- Configuracion de busqueda ---

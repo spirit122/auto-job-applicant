@@ -49,6 +49,7 @@ DATOS_PERSONALES = {
     "telefono": os.environ.get("APPLICANT_PHONE", "+1234567890"),
     "ciudad": os.environ.get("APPLICANT_CITY", "Your City"),
     "pais": os.environ.get("APPLICANT_COUNTRY", "Your Country"),
+    "estado": os.environ.get("APPLICANT_STATE", "Your State"),
     "linkedin": os.environ.get("APPLICANT_LINKEDIN", ""),
     "portfolio": os.environ.get("APPLICANT_PORTFOLIO", ""),
     "graduation_year": os.environ.get("APPLICANT_GRAD_YEAR", "2020"),
@@ -674,7 +675,8 @@ KEYWORDS = [
 
 # Ubicaciones aceptadas
 UBICACIONES = ["remote", "remoto", "chile", "latam", "latin america",
-               "south america", "worldwide", "anywhere", "global", "santiago"]
+               "south america", "worldwide", "anywhere", "global", "santiago",
+               DATOS_PERSONALES["ciudad"].lower()]
 
 # Email para notificaciones
 GMAIL_USER = os.environ.get("GMAIL_REMITENTE", "your@gmail.com")
@@ -832,13 +834,13 @@ Teléfono: {DATOS_PERSONALES["telefono"]}"""
 # BUSCADOR DE OFERTAS - Usa el mismo buscador que ya funciona
 # ============================================================
 class BuscadorOfertas:
-    """Busca ofertas importando resultados del buscador_trabajos.py"""
+    """Busca ofertas importando resultados del job_searcher.py"""
 
     def __init__(self):
         self.ofertas = []
 
     def buscar_todas(self):
-        """Ejecuta búsqueda usando el buscador_trabajos.py que ya funciona"""
+        """Ejecuta búsqueda usando job_searcher.py"""
         logging.info("=" * 60)
         logging.info("INICIANDO BÚSQUEDA DE OFERTAS (8 fuentes)")
         logging.info("=" * 60)
@@ -847,7 +849,7 @@ class BuscadorOfertas:
             # Importar el buscador que ya funciona
             import sys
             sys.path.insert(0, WORK_DIR)
-            import buscador_trabajos as bt
+            import job_searcher as bt
 
             # Crear sesión HTTP
             sesion = bt.crear_sesion_http()
@@ -893,7 +895,7 @@ class BuscadorOfertas:
             logging.info(f"\nTotal ofertas únicas encontradas: {len(self.ofertas)}")
 
         except ImportError as e:
-            logging.error(f"No se pudo importar buscador_trabajos.py: {e}")
+            logging.error(f"Could not import job_searcher.py: {e}")
             logging.info("Intentando búsqueda directa de respaldo...")
             self._busqueda_respaldo()
 
@@ -1865,7 +1867,7 @@ class AutoPostulador:
         # Anything to clarify / additional info
         if any(w in q for w in ["clarify", "anything else", "additional information", "additional comments",
                                  "anything you would like"]):
-            return ("I am based in Santiago, Chile and available for remote work across all time zones. "
+            return (f"I am based in {DATOS_PERSONALES['ciudad']}, {DATOS_PERSONALES['pais']} and available for remote work across all time zones. "
                     "I am passionate about game development and committed to delivering high-quality work. "
                     "I am open to contract, full-time, or freelance arrangements.")
 
@@ -1941,7 +1943,7 @@ class AutoPostulador:
         # Where do you live / location details
         if any(w in q for w in ["where do you live", "city / province", "city province",
                                  "current location", "where are you based", "country of residence"]):
-            return "Santiago, Región Metropolitana, Chile"
+            return f"{DATOS_PERSONALES['ciudad']}, {DATOS_PERSONALES['estado']}, {DATOS_PERSONALES['pais']}"
 
         # Problem solving / debugging / root cause
         if any(w in q for w in ["root cause", "ambiguous", "messy technical", "debugging", "troubleshoot",
@@ -2131,7 +2133,8 @@ class AutoPostulador:
                     loc_elem.click()
                     time.sleep(0.3)
                     loc_elem.clear()
-                    loc_elem.send_keys("Santiago, Chile")
+                    location_str = f"{DATOS_PERSONALES['ciudad']}, {DATOS_PERSONALES['pais']}"
+                    loc_elem.send_keys(location_str)
                     time.sleep(1)
                     # Seleccionar primera sugerencia del autocomplete si aparece
                     try:
@@ -2143,14 +2146,14 @@ class AutoPostulador:
                             if sug.is_displayed():
                                 sug.click()
                                 location_filled = True
-                                logging.info("  Ubicación llenada: Santiago, Chile (autocomplete)")
+                                logging.info(f"  Ubicación llenada: {location_str} (autocomplete)")
                                 break
                     except:
                         pass
                     if not location_filled:
                         loc_elem.send_keys(Keys.RETURN)
                         location_filled = True
-                        logging.info("  Ubicación llenada: Santiago, Chile")
+                        logging.info(f"  Ubicación llenada: {location_str}")
                     break
             except:
                 continue
@@ -2163,11 +2166,11 @@ class AutoPostulador:
             tag = country_select.tag_name.lower()
             if tag == "select":
                 sel = Select(country_select)
-                for opt_text in ["Chile", "CL"]:
+                for opt_text in [DATOS_PERSONALES["pais"]]:
                     try:
                         sel.select_by_visible_text(opt_text)
                         country_filled = True
-                        logging.info("  País llenado: Chile (select)")
+                        logging.info(f"  País llenado: {DATOS_PERSONALES['pais']} (select)")
                         break
                     except:
                         continue
@@ -2175,24 +2178,24 @@ class AutoPostulador:
                 country_select.click()
                 time.sleep(0.3)
                 country_select.clear()
-                country_select.send_keys("Chile")
+                country_select.send_keys(DATOS_PERSONALES["pais"])
                 time.sleep(1)
                 # Seleccionar de autocomplete
                 try:
                     opts = self.driver.find_elements(By.CSS_SELECTOR,
                         "li[role='option'], [class*='option'], [class*='suggestion']")
                     for opt in opts:
-                        if opt.is_displayed() and "chile" in opt.text.lower():
+                        if opt.is_displayed() and DATOS_PERSONALES["pais"].lower() in opt.text.lower():
                             opt.click()
                             country_filled = True
-                            logging.info("  País llenado: Chile (autocomplete)")
+                            logging.info(f"  País llenado: {DATOS_PERSONALES['pais']} (autocomplete)")
                             break
                 except:
                     pass
                 if not country_filled:
                     country_select.send_keys(Keys.RETURN)
                     country_filled = True
-                    logging.info("  País llenado: Chile (input)")
+                    logging.info(f"  País llenado: {DATOS_PERSONALES['pais']} (input)")
         except:
             pass
 
@@ -2206,20 +2209,20 @@ class AutoPostulador:
                         if elem.tag_name.lower() == "select":
                             sel = Select(elem)
                             try:
-                                sel.select_by_visible_text("Chile")
+                                sel.select_by_visible_text(DATOS_PERSONALES["pais"])
                                 country_filled = True
-                                logging.info("  País llenado: Chile (select fallback)")
+                                logging.info(f"  País llenado: {DATOS_PERSONALES['pais']} (select fallback)")
                             except:
                                 pass
                         else:
                             elem.click()
                             time.sleep(0.3)
                             elem.clear()
-                            elem.send_keys("Chile")
+                            elem.send_keys(DATOS_PERSONALES["pais"])
                             time.sleep(0.5)
                             elem.send_keys(Keys.RETURN)
                             country_filled = True
-                            logging.info("  País llenado: Chile (input fallback)")
+                            logging.info(f"  País llenado: {DATOS_PERSONALES['pais']} (input fallback)")
                         break
                 except:
                     continue
@@ -2233,19 +2236,19 @@ class AutoPostulador:
                     city_elem.click()
                     time.sleep(0.3)
                     city_elem.clear()
-                    city_elem.send_keys("Santiago")
-                    logging.info("  Ciudad llenada: Santiago")
+                    city_elem.send_keys(DATOS_PERSONALES["ciudad"])
+                    logging.info(f"  Ciudad llenada: {DATOS_PERSONALES['ciudad']}")
                     break
             except:
                 continue
 
         # Llenar campos de state/province/address si existen
         for addr_sel, addr_val, addr_label in [
-            ("#state", "Región Metropolitana", "Estado/Región"),
-            ("input[name='state']", "Región Metropolitana", "Estado/Región"),
-            ("input[aria-label='State']", "Región Metropolitana", "Estado/Región"),
-            ("#address", "La Florida, Santiago", "Dirección"),
-            ("input[name='address']", "La Florida, Santiago", "Dirección"),
+            ("#state", DATOS_PERSONALES["estado"], "Estado/Región"),
+            ("input[name='state']", DATOS_PERSONALES["estado"], "Estado/Región"),
+            ("input[aria-label='State']", DATOS_PERSONALES["estado"], "Estado/Región"),
+            ("#address", DATOS_PERSONALES["ciudad"], "Dirección"),
+            ("input[name='address']", DATOS_PERSONALES["ciudad"], "Dirección"),
         ]:
             try:
                 elem = self.driver.find_element(By.CSS_SELECTOR, addr_sel)
@@ -2791,7 +2794,7 @@ class AutoPostulador:
                 elif any(w in combined_inp for w in ["city"]) and "country" not in combined_inp:
                     inp.click()
                     time.sleep(0.2)
-                    inp.send_keys("Santiago")
+                    inp.send_keys(DATOS_PERSONALES["ciudad"])
                     logging.info("  Ciudad llenada")
 
                 # Phone number (if not filled by base handler)
@@ -2826,7 +2829,7 @@ class AutoPostulador:
                 elif any(w in combined_inp for w in ["full address", "street address", "address line"]):
                     inp.click()
                     time.sleep(0.2)
-                    inp.send_keys("La Florida, Santiago, Chile")
+                    inp.send_keys(f"{DATOS_PERSONALES['ciudad']}, {DATOS_PERSONALES['pais']}")
                     logging.info("  Dirección completa llenada")
 
                 # How did you hear / referral source
@@ -2847,21 +2850,22 @@ class AutoPostulador:
                 elif any(w in combined_inp for w in ["current location", "your location", "enter your location"]):
                     inp.click()
                     time.sleep(0.2)
-                    inp.send_keys("Santiago, Chile")
+                    location_str = f"{DATOS_PERSONALES['ciudad']}, {DATOS_PERSONALES['pais']}"
+                    inp.send_keys(location_str)
                     time.sleep(1)
                     # Try autocomplete suggestion
                     try:
                         suggestions = self.driver.find_elements(By.CSS_SELECTOR,
                             "li[role='option'], [class*='suggestion'], [class*='option']")
                         for sug in suggestions:
-                            if sug.is_displayed() and "santiago" in sug.text.lower():
+                            if sug.is_displayed() and DATOS_PERSONALES["ciudad"].lower() in sug.text.lower():
                                 sug.click()
                                 break
                         else:
                             inp.send_keys(Keys.RETURN)
                     except:
                         inp.send_keys(Keys.RETURN)
-                    logging.info("  Ubicación actual llenada: Santiago, Chile")
+                    logging.info(f"  Ubicación actual llenada: {location_str}")
 
                 # Website URL / GitHub / Portfolio (generic)
                 elif any(w in combined_inp for w in ["website url", "github", "portfolio url",
@@ -2882,7 +2886,7 @@ class AutoPostulador:
                 elif any(w in combined_inp for w in ["place of birth", "birth place", "birthplace"]):
                     inp.click()
                     time.sleep(0.2)
-                    inp.send_keys("Santiago, Chile")
+                    inp.send_keys(f"{DATOS_PERSONALES['ciudad']}, {DATOS_PERSONALES['pais']}")
                     logging.info("  Lugar nacimiento llenado")
 
         except Exception as e:
@@ -3362,7 +3366,7 @@ class AutoPostulador:
                                                    "country of residence"]):
                     inp.click()
                     time.sleep(0.2)
-                    inp.send_keys("Santiago, Región Metropolitana, Chile")
+                    inp.send_keys(f"{DATOS_PERSONALES['ciudad']}, {DATOS_PERSONALES['estado']}, {DATOS_PERSONALES['pais']}")
                     logging.info("  Lever: Detailed location llenado")
                 # Notice period
                 elif any(w in combined for w in ["notice period", "preferred start"]):
@@ -4591,7 +4595,7 @@ def guardar_url_expirada(url):
 # ============================================================
 def main():
     # Configurar logging
-    log_file = os.path.join(WORK_DIR, "auto_postulador.log")
+    log_file = os.path.join(WORK_DIR, "auto_applicant.log")
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s [%(levelname)s] %(message)s",

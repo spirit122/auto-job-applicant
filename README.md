@@ -120,14 +120,17 @@ Each platform has a dedicated handler with optimized strategies:
 ```
 auto-job-applicant/
 │
-├── auto_postulador.py            # Main bot — search, fill & apply (~4,800 lines)
-├── buscador_trabajos.py          # Job search engine + HTML reports (~1,300 lines)
-├── ofertas_frescas.py            # Curated active listings from ATS platforms
-├── buscar_greenhouse_activas.py  # Greenhouse API scanner — finds live jobs
-├── generar_pdfs.py               # HTML → PDF resume converter (Edge CDP)
+├── src/
+│   ├── auto_applicant.py       # Main bot — search, fill & apply (~4,800 lines)
+│   ├── job_searcher.py         # Job search engine + HTML reports (~1,300 lines)
+│   └── fresh_listings.py       # Curated active listings from ATS platforms
 │
-├── requirements.txt              # Python dependencies
-├── .env.example                  # Environment variables template
+├── tools/
+│   ├── greenhouse_scanner.py   # Greenhouse API scanner — finds live jobs
+│   └── pdf_generator.py        # HTML → PDF resume converter (Edge CDP)
+│
+├── requirements.txt            # Python dependencies
+├── .env.example                # Environment variables template
 ├── .gitignore
 ├── LICENSE
 └── README.md
@@ -187,7 +190,7 @@ Drop your CV/Resume PDF files in the project directory.
 ### Search for jobs
 
 ```bash
-python buscador_trabajos.py
+python src/job_searcher.py
 ```
 
 Scrapes multiple sources and generates `resultados_trabajos.html` — open it in your browser to review found listings.
@@ -195,10 +198,18 @@ Scrapes multiple sources and generates `resultados_trabajos.html` — open it in
 ### Auto-apply
 
 ```bash
-python auto_postulador.py
+python src/auto_applicant.py
 ```
 
 Launches a browser, navigates to each listing, detects the ATS, fills forms, generates cover letters, and submits. Progress is logged in real-time.
+
+### Scan Greenhouse API
+
+```bash
+python tools/greenhouse_scanner.py
+```
+
+Finds active job listings directly from Greenhouse's public API across 30+ companies.
 
 ### Output
 
@@ -207,7 +218,7 @@ Launches a browser, navigates to each listing, detects the ATS, fills forms, gen
 | `resultados_trabajos.html` | Visual report of found job listings |
 | `reporte_postulaciones.html` | Report of submitted applications |
 | `urls_aplicadas.txt` | Log of applied URLs (prevents duplicates) |
-| `auto_postulador.log` | Detailed execution log |
+| `auto_applicant.log` | Detailed execution log |
 
 ---
 

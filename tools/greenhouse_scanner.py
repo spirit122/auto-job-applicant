@@ -82,6 +82,6 @@ for i, job in enumerate(all_jobs[:30], 1):
     print(f"   Location: {job['ubicacion']}")
 
 # Guardar como Python dict para copiar al script
-print(f"\n\n# Para copiar a auto_postulador.py:")
+print(f"\n\n# To copy into src/auto_applicant.py:")
 for job in all_jobs:
     print(f'    {{"titulo": "{job["titulo"]}", "empresa": "{job["empresa"]}", "ubicacion": "{job["ubicacion"]}", "salario": "", "url": "{job["url"]}", "descripcion": "Active Greenhouse job", "fuente": "Greenhouse", "fecha": "Febrero 2026"}},')
