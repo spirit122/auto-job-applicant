@@ -120,11 +120,14 @@ Each platform has a dedicated handler with optimized strategies:
 ```
 auto-job-applicant/
 │
-├── auto_postulador.py      # Main bot — search, fill & apply (~4,800 lines)
-├── buscador_trabajos.py    # Job search engine + HTML reports (~1,300 lines)
-├── ofertas_frescas.py      # Curated active listings from ATS platforms
+├── auto_postulador.py            # Main bot — search, fill & apply (~4,800 lines)
+├── buscador_trabajos.py          # Job search engine + HTML reports (~1,300 lines)
+├── ofertas_frescas.py            # Curated active listings from ATS platforms
+├── buscar_greenhouse_activas.py  # Greenhouse API scanner — finds live jobs
+├── generar_pdfs.py               # HTML → PDF resume converter (Edge CDP)
 │
-├── .env.example            # Environment variables template
+├── requirements.txt              # Python dependencies
+├── .env.example                  # Environment variables template
 ├── .gitignore
 ├── LICENSE
 └── README.md
@@ -144,7 +147,7 @@ cd auto-job-applicant
 ### 2. Install dependencies
 
 ```bash
-pip install requests beautifulsoup4 selenium feedparser lxml
+pip install -r requirements.txt
 ```
 
 ### 3. Configure

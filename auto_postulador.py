@@ -1038,7 +1038,7 @@ class AutoPostulador:
 
         # Usar perfil de Edge existente (con sesión de Google iniciada)
         if usar_perfil:
-            edge_user_data = r"C:\Users\eos\AppData\Local\Microsoft\Edge\User Data"
+            edge_user_data = os.environ.get("EDGE_USER_DATA", os.path.join(os.environ.get("LOCALAPPDATA", ""), "Microsoft", "Edge", "User Data"))
             self.options.add_argument(f"--user-data-dir={edge_user_data}")
             self.options.add_argument("--profile-directory=Default")
 
@@ -2772,12 +2772,12 @@ class AutoPostulador:
                     if any(w in combined_inp for w in ["last", "apellido", "surname", "family"]):
                         inp.click()
                         time.sleep(0.2)
-                        inp.send_keys(DATOS_PERSONALES.get("apellido", "Sepulveda"))
+                        inp.send_keys(DATOS_PERSONALES.get("apellido", "Doe"))
                         logging.info("  Preferred last name llenado")
                     else:
                         inp.click()
                         time.sleep(0.2)
-                        inp.send_keys(DATOS_PERSONALES.get("nombre", "Ricardo"))
+                        inp.send_keys(DATOS_PERSONALES.get("nombre", "John"))
                         logging.info("  Preferred first name llenado")
 
                 # Postal code / zip code
