@@ -252,6 +252,6 @@ MIT — see [LICENSE](LICENSE) for details.
 
 <div align="center">
 
-**Built by [spirit122](https://github.com/spirit122)**
+**Built by [Ricardo Sepúlveda](https://github.com/spirit122)**
 
 </div>
